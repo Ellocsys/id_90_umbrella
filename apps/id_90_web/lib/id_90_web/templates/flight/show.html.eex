@@ -1,0 +1,53 @@
+<h1>Show Flight</h1>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @flight.name %>
+  </li>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @flight.description %>
+  </li>
+
+  <li>
+    <strong>Uid:</strong>
+    <%= @flight.uid %>
+  </li>
+
+  <li>
+    <strong>Departure:</strong>
+    <%= @flight.departure %>
+  </li>
+
+  <li>
+    <strong>Arrive:</strong>
+    <%= @flight.arrive %>
+  </li>
+
+  <li>
+    <strong>Real departure:</strong>
+    <%= @flight.real_departure %>
+  </li>
+
+  <li>
+    <strong>Real arrive:</strong>
+    <%= @flight.real_arrive %>
+  </li>
+
+  <li>
+    <strong>Duration:</strong>
+    <%= @flight.duration %>
+  </li>
+
+  <li>
+    <strong>Real duration:</strong>
+    <%= @flight.real_duration %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.flight_path(@conn, :edit, @flight) %></span>
+<span><%= link "Back", to: Routes.flight_path(@conn, :index) %></span>
