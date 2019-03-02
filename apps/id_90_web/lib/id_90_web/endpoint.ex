@@ -2,7 +2,7 @@ defmodule Id90Web.Endpoint do
   use Phoenix.Endpoint, otp_app: :id_90_web
 
   socket "/socket", Id90Web.UserSocket,
-    websocket: true,
+    websocket: [timeout: 45_000],
     longpoll: false
 
   # Serve at "/" the static files from "priv/static" directory.
