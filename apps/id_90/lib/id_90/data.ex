@@ -197,4 +197,22 @@ defmodule Id90.Data do
   def change_flight(%Flight{} = flight) do
     Flight.changeset(flight, %{})
   end
+
+  @spec get_user_calendar(Id90.Data.User.t()) :: [ExIcal.Event.t()]
+  def get_user_calendar(%User{remote_login: remote_login, remote_pass: remote_pass, id90: id90}) do
+
+    url = "https://lk2.aeroflot.ru/lk/#{id90}.id"
+
+    credentials = "#{remote_login}:#{remote_pass}" |> Base.encode64()
+
+    headers = [{"Content-Type", "application/json"}, {"Authorization", "Basic #{credentials}"}]
+
+    case HTTPoison.get(url, headers) do
+      {:ok, %{status_code: 200, body: body}} ->
+        ExIcal.parse(body)
+
+      {:error, %{reason: reason}} ->
+        IO.inspect(reason)
+    end
+  end
 end
