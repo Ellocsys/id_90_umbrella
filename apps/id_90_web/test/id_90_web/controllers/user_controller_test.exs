@@ -3,8 +3,20 @@ defmodule Id90Web.UserControllerTest do
 
   alias Id90.Data
 
-  @create_attrs %{id90: "some id90", login: "some login", pass: "some pass", remote_login: "some remote_login", remote_pass: "some remote_pass"}
-  @update_attrs %{id90: "some updated id90", login: "some updated login", pass: "some updated pass", remote_login: "some updated remote_login", remote_pass: "some updated remote_pass"}
+  @create_attrs %{
+    id90: "some id90",
+    login: "some login",
+    pass: "some pass",
+    remote_login: "some remote_login",
+    remote_pass: "some remote_pass"
+  }
+  @update_attrs %{
+    id90: "some updated id90",
+    login: "some updated login",
+    pass: "some updated pass",
+    remote_login: "some updated remote_login",
+    remote_pass: "some updated remote_pass"
+  }
   @invalid_attrs %{id90: nil, login: nil, pass: nil, remote_login: nil, remote_pass: nil}
 
   def fixture(:user) do
@@ -75,6 +87,7 @@ defmodule Id90Web.UserControllerTest do
     test "deletes chosen user", %{conn: conn, user: user} do
       conn = delete(conn, Routes.user_path(conn, :delete, user))
       assert redirected_to(conn) == Routes.user_path(conn, :index)
+
       assert_error_sent 404, fn ->
         get(conn, Routes.user_path(conn, :show, user))
       end

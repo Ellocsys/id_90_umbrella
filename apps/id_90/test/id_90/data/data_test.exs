@@ -6,8 +6,20 @@ defmodule Id90.DataTest do
   describe "users" do
     alias Id90.Data.User
 
-    @valid_attrs %{id90: "some id90", login: "some login", pass: "some pass", remote_login: "some remote_login", remote_pass: "some remote_pass"}
-    @update_attrs %{id90: "some updated id90", login: "some updated login", pass: "some updated pass", remote_login: "some updated remote_login", remote_pass: "some updated remote_pass"}
+    @valid_attrs %{
+      id90: "some id90",
+      login: "some login",
+      pass: "some pass",
+      remote_login: "some remote_login",
+      remote_pass: "some remote_pass"
+    }
+    @update_attrs %{
+      id90: "some updated id90",
+      login: "some updated login",
+      pass: "some updated pass",
+      remote_login: "some updated remote_login",
+      remote_pass: "some updated remote_pass"
+    }
     @invalid_attrs %{id90: nil, login: nil, pass: nil, remote_login: nil, remote_pass: nil}
 
     def user_fixture(attrs \\ %{}) do
@@ -73,9 +85,39 @@ defmodule Id90.DataTest do
   describe "flights" do
     alias Id90.Data.Flight
 
-    @valid_attrs %{arrive: ~N[2010-04-17 14:00:00], departure: ~N[2010-04-17 14:00:00], description: "some description", duration: 42, name: "some name", real_arrive: ~N[2010-04-17 14:00:00], real_departure: ~N[2010-04-17 14:00:00], real_duration: 42, uid: "some uid"}
-    @update_attrs %{arrive: ~N[2011-05-18 15:01:01], departure: ~N[2011-05-18 15:01:01], description: "some updated description", duration: 43, name: "some updated name", real_arrive: ~N[2011-05-18 15:01:01], real_departure: ~N[2011-05-18 15:01:01], real_duration: 43, uid: "some updated uid"}
-    @invalid_attrs %{arrive: nil, departure: nil, description: nil, duration: nil, name: nil, real_arrive: nil, real_departure: nil, real_duration: nil, uid: nil}
+    @valid_attrs %{
+      arrive: ~N[2010-04-17 14:00:00],
+      departure: ~N[2010-04-17 14:00:00],
+      description: "some description",
+      duration: 42,
+      name: "some name",
+      real_arrive: ~N[2010-04-17 14:00:00],
+      real_departure: ~N[2010-04-17 14:00:00],
+      real_duration: 42,
+      uid: "some uid"
+    }
+    @update_attrs %{
+      arrive: ~N[2011-05-18 15:01:01],
+      departure: ~N[2011-05-18 15:01:01],
+      description: "some updated description",
+      duration: 43,
+      name: "some updated name",
+      real_arrive: ~N[2011-05-18 15:01:01],
+      real_departure: ~N[2011-05-18 15:01:01],
+      real_duration: 43,
+      uid: "some updated uid"
+    }
+    @invalid_attrs %{
+      arrive: nil,
+      departure: nil,
+      description: nil,
+      duration: nil,
+      name: nil,
+      real_arrive: nil,
+      real_departure: nil,
+      real_duration: nil,
+      uid: nil
+    }
 
     def flight_fixture(attrs \\ %{}) do
       {:ok, flight} =

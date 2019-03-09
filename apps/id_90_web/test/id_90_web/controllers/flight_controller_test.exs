@@ -3,9 +3,39 @@ defmodule Id90Web.FlightControllerTest do
 
   alias Id90.Data
 
-  @create_attrs %{arrive: ~N[2010-04-17 14:00:00], departure: ~N[2010-04-17 14:00:00], description: "some description", duration: 42, name: "some name", real_arrive: ~N[2010-04-17 14:00:00], real_departure: ~N[2010-04-17 14:00:00], real_duration: 42, uid: "some uid"}
-  @update_attrs %{arrive: ~N[2011-05-18 15:01:01], departure: ~N[2011-05-18 15:01:01], description: "some updated description", duration: 43, name: "some updated name", real_arrive: ~N[2011-05-18 15:01:01], real_departure: ~N[2011-05-18 15:01:01], real_duration: 43, uid: "some updated uid"}
-  @invalid_attrs %{arrive: nil, departure: nil, description: nil, duration: nil, name: nil, real_arrive: nil, real_departure: nil, real_duration: nil, uid: nil}
+  @create_attrs %{
+    arrive: ~N[2010-04-17 14:00:00],
+    departure: ~N[2010-04-17 14:00:00],
+    description: "some description",
+    duration: 42,
+    name: "some name",
+    real_arrive: ~N[2010-04-17 14:00:00],
+    real_departure: ~N[2010-04-17 14:00:00],
+    real_duration: 42,
+    uid: "some uid"
+  }
+  @update_attrs %{
+    arrive: ~N[2011-05-18 15:01:01],
+    departure: ~N[2011-05-18 15:01:01],
+    description: "some updated description",
+    duration: 43,
+    name: "some updated name",
+    real_arrive: ~N[2011-05-18 15:01:01],
+    real_departure: ~N[2011-05-18 15:01:01],
+    real_duration: 43,
+    uid: "some updated uid"
+  }
+  @invalid_attrs %{
+    arrive: nil,
+    departure: nil,
+    description: nil,
+    duration: nil,
+    name: nil,
+    real_arrive: nil,
+    real_departure: nil,
+    real_duration: nil,
+    uid: nil
+  }
 
   def fixture(:flight) do
     {:ok, flight} = Data.create_flight(@create_attrs)
@@ -75,6 +105,7 @@ defmodule Id90Web.FlightControllerTest do
     test "deletes chosen flight", %{conn: conn, flight: flight} do
       conn = delete(conn, Routes.flight_path(conn, :delete, flight))
       assert redirected_to(conn) == Routes.flight_path(conn, :index)
+
       assert_error_sent 404, fn ->
         get(conn, Routes.flight_path(conn, :show, flight))
       end

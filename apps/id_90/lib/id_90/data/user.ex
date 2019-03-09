@@ -2,7 +2,6 @@ defmodule Id90.Data.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-
   schema "users" do
     field :id90, :string
     field :login, :string

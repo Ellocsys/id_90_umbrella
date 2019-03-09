@@ -11,20 +11,20 @@ defmodule Id90Web.FlightController do
   end
 
   def new(conn, %{"user_id" => user_id}) do
-    
     user = Data.get_user!(user_id)
-    
-    {_no_flights, flights} = Data.get_user_calendar(user)
-    |> Enum.split_with(fn %ExIcal.Event{uid: uid} -> String.ends_with?(uid, "NO-FLIGHT") end)
+
+    {_no_flights, flights} =
+      Data.get_user_calendar(user)
+      |> Enum.split_with(fn %ExIcal.Event{uid: uid} -> String.ends_with?(uid, "NO-FLIGHT") end)
 
     flights
-    |>  Enum.map(fn event -> 
-      from_event(event) 
-      |> Enum.map(fn attr -> 
+    |> Enum.map(fn event ->
+      from_event(event)
+      |> Enum.map(fn attr ->
         Data.create_flight(attr)
       end)
     end)
-    
+
     conn
     |> put_flash(:info, "Flight successfully updated.")
     |> redirect(to: Routes.user_flight_path(conn, :index, user: user))
@@ -69,9 +69,22 @@ defmodule Id90Web.FlightController do
     end
   end
 
-  defp from_event(%ExIcal.Event{uid: raw_uid, start: departure, end: arrival, description: description}) do
+  defp from_event(%ExIcal.Event{
+         uid: raw_uid,
+         start: departure,
+         end: arrival,
+         description: description
+       }) do
     [_date | uids] = String.split(raw_uid, "-")
-    for uid <- uids, do: %{uid: uid, departure: departure, arrival: arrival, description: description, name: raw_uid} 
+
+    for uid <- uids,
+        do: %{
+          uid: uid,
+          departure: departure,
+          arrival: arrival,
+          description: description,
+          name: raw_uid
+        }
   end
 
   # def delete(conn, %{"id" => id}) do

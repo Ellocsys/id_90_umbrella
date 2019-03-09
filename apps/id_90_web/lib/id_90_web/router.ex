@@ -19,9 +19,8 @@ defmodule Id90Web.Router do
     # get "/", PageController, :index
 
     resources "/", UserController do
-      resources "/flights", FlightController      
+      resources "/flights", FlightController
     end
-
   end
 
   # Other scopes may use custom stacks.

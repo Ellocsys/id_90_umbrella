@@ -3,7 +3,6 @@ defmodule Id90.Data.Flight do
   import Ecto.Changeset
   alias Ecto.Changeset
 
-
   schema "flights" do
     field :arrive, :naive_datetime
     field :departure, :naive_datetime
@@ -32,11 +31,16 @@ defmodule Id90.Data.Flight do
     |> cast(attrs, [:real_departure, :real_arrive])
     |> validate_required([:real_departure, :real_arrive])
     |> put_duration({:real_departure, :real_arrival, :real_duration})
-
   end
 
   def put_duration(%Changeset{} = changeset, {departure_field, arrival_field, duration_field}) do
     changeset
-    |> put_change(duration_field, NaiveDateTime.diff(get_field(changeset, arrival_field), get_field(changeset, departure_field)))
+    |> put_change(
+      duration_field,
+      NaiveDateTime.diff(
+        get_field(changeset, arrival_field),
+        get_field(changeset, departure_field)
+      )
+    )
   end
 end
