@@ -6,8 +6,6 @@
       <th>Id90</th>
       <th>Remote login</th>
       <th>Remote pass</th>
-      <th>Login</th>
-      <th>Pass</th>
 
       <th></th>
     </tr>
@@ -18,8 +16,6 @@
       <td><%= user.id90 %></td>
       <td><%= user.remote_login %></td>
       <td><%= user.remote_pass %></td>
-      <td><%= user.login %></td>
-      <td><%= user.pass %></td>
 
       <td>
         <%= link "Show", to: Routes.user_path(@conn, :show, user) %>

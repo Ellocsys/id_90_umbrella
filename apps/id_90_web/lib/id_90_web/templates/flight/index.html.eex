@@ -30,13 +30,13 @@
       <td><%= flight.real_duration %></td>
 
       <td>
-        <%= link "Show", to: Routes.flight_path(@conn, :show, flight) %>
-        <%= link "Edit", to: Routes.flight_path(@conn, :edit, flight) %>
-        <%= link "Delete", to: Routes.flight_path(@conn, :delete, flight), method: :delete, data: [confirm: "Are you sure?"] %>
+        <%= link "Show", to: Routes.user_flight_path(@conn, :show, @user, flight) %>
+        <%= link "Edit", to: Routes.user_flight_path(@conn, :edit, @user, flight) %>
+        <%= link "Delete", to: Routes.user_flight_path(@conn, :delete, @user, flight), method: :delete, data: [confirm: "Are you sure?"] %>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<span><%= link "New Flight", to: Routes.flight_path(@conn, :new) %></span>
+<span><%= link "New Flight", to: Routes.user_flight_path(@conn, :new, @user) %></span>

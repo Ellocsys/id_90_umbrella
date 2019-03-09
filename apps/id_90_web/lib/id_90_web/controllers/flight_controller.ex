@@ -4,38 +4,56 @@ defmodule Id90Web.FlightController do
   alias Id90.Data
   alias Id90.Data.Flight
 
-  def index(conn, _params) do
+  def index(conn, %{"user_id" => user_id}) do
     flights = Data.list_flights()
-    render(conn, "index.html", flights: flights)
+    user = Data.get_user!(user_id)
+    render(conn, "index.html", flights: flights, user: user)
   end
 
-  def new(conn, _params) do
-    changeset = Data.change_flight(%Flight{})
-    render(conn, "new.html", changeset: changeset)
+  def new(conn, %{"user_id" => user_id}) do
+    
+    user = Data.get_user!(user_id)
+    
+    {_no_flights, flights} = Data.get_user_calendar(user)
+    |> Enum.split_with(fn %ExIcal.Event{uid: uid} -> String.ends_with?(uid, "NO-FLIGHT") end)
+
+    flights
+    |>  Enum.map(fn event -> 
+      from_event(event) 
+      |> Enum.map(fn attr -> 
+        Data.create_flight(attr)
+      end)
+    end)
+    
+    conn
+    |> put_flash(:info, "Flight successfully updated.")
+    |> redirect(to: Routes.user_flight_path(conn, :index, user: user))
   end
 
-  def create(conn, %{"flight" => flight_params}) do
-    case Data.create_flight(flight_params) do
-      {:ok, flight} ->
-        conn
-        |> put_flash(:info, "Flight created successfully.")
-        |> redirect(to: Routes.flight_path(conn, :show, flight))
+  # def create(conn, %{"flight" => flight_params, "user_id" => user_id}) do
+  #   user = Data.get_user!(user_id)
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
-    end
-  end
+  #   case Data.create_flight(flight_params) do
+  #     {:ok, flight} ->
+  #       conn
+  #       |> put_flash(:info, "Flight created successfully.")
+  #       |> redirect(to: Routes.flight_path(conn, :show, flight))
+
+  #     {:error, %Ecto.Changeset{} = changeset} ->
+  #       render(conn, "new.html", changeset: changeset, user: user)
+  #   end
+  # end
 
   def show(conn, %{"id" => id}) do
     flight = Data.get_flight!(id)
     render(conn, "show.html", flight: flight)
   end
 
-  def edit(conn, %{"id" => id}) do
-    flight = Data.get_flight!(id)
-    changeset = Data.change_flight(flight)
-    render(conn, "edit.html", flight: flight, changeset: changeset)
-  end
+  # def edit(conn, %{"id" => id}) do
+  #   flight = Data.get_flight!(id)
+  #   changeset = Data.change_flight(flight)
+  #   render(conn, "edit.html", flight: flight, changeset: changeset)
+  # end
 
   def update(conn, %{"id" => id, "flight" => flight_params}) do
     flight = Data.get_flight!(id)
@@ -51,12 +69,17 @@ defmodule Id90Web.FlightController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    flight = Data.get_flight!(id)
-    {:ok, _flight} = Data.delete_flight(flight)
-
-    conn
-    |> put_flash(:info, "Flight deleted successfully.")
-    |> redirect(to: Routes.flight_path(conn, :index))
+  defp from_event(%ExIcal.Event{uid: raw_uid, start: departure, end: arrival, description: description}) do
+    [_date | uids] = String.split(raw_uid, "-")
+    for uid <- uids, do: %{uid: uid, departure: departure, arrival: arrival, description: description, name: raw_uid} 
   end
+
+  # def delete(conn, %{"id" => id}) do
+  #   flight = Data.get_flight!(id)
+  #   {:ok, _flight} = Data.delete_flight(flight)
+
+  #   conn
+  #   |> put_flash(:info, "Flight deleted successfully.")
+  #   |> redirect(to: Routes.flight_path(conn, :index))
+  # end
 end

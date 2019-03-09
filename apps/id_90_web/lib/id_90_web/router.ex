@@ -16,11 +16,12 @@ defmodule Id90Web.Router do
   scope "/", Id90Web do
     pipe_through :browser
 
-    get "/", PageController, :index
+    # get "/", PageController, :index
 
-    resources "/users", UserController
+    resources "/", UserController do
+      resources "/flights", FlightController      
+    end
 
-    resources "/flights", FlightController
   end
 
   # Other scopes may use custom stacks.

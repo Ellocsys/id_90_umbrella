@@ -39,7 +39,7 @@ defmodule Id90.MixProject do
       {:ecto_sql, "~> 3.0"},
       {:postgrex, ">= 0.0.0"},
       {:httpoison, "~> 1.4"},
-      {:ex_ical, "~> 0.2"}
+      {:ex_ical, git: "https://github.com/Ellocsys/ex_ical"}
     ]
   end
 

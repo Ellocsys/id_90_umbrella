@@ -148,7 +148,7 @@ defmodule Id90.Data do
   def create_flight(attrs \\ %{}) do
     %Flight{}
     |> Flight.changeset(attrs)
-    |> Repo.insert()
+    |> Repo.insert_or_update!()
   end
 
   @doc """
