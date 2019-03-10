@@ -60,8 +60,9 @@ config :id_90_web, Id90Web.Endpoint,
     ]
   ]
 
-config :id_90_web, base_auth: [
-  username: "admin",
-  password: "simple_password",
-  realm: "Admin Area"
-]
+config :id_90_web,
+  base_auth: [
+    username: "admin",
+    password: "simple_password",
+    realm: "Admin Area"
+  ]

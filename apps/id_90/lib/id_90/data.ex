@@ -119,6 +119,7 @@ defmodule Id90.Data do
     from(f in Flight, order_by: [desc: f.departure])
     |> Repo.all()
   end
+
   def list_flights(user_id) do
     from(f in Flight, where: [user_id: ^user_id], order_by: [desc: f.departure])
     |> Repo.all()
@@ -198,7 +199,6 @@ defmodule Id90.Data do
       false ->
         flight
     end
-   
   end
 
   @doc """
@@ -236,17 +236,18 @@ defmodule Id90.Data do
         departure.mounth
       }.#{departure.day}/18/22/#{uid}"
 
-    params = case HTTPoison.get(url) do
-      {:ok, %{status_code: 200, body: body}} ->
-        [%{"departureTimeUtc" => departureTime, "arrivalTimeUtc" => arrivalTime}] =
-          Jason.decode!(body)
+    params =
+      case HTTPoison.get(url) do
+        {:ok, %{status_code: 200, body: body}} ->
+          [%{"departureTimeUtc" => departureTime, "arrivalTimeUtc" => arrivalTime}] =
+            Jason.decode!(body)
 
-        %{real_departure: departureTime, real_arrive: arrivalTime}
+          %{real_departure: departureTime, real_arrive: arrivalTime}
 
-      {:error, %{reason: reason}} ->
-        Logger.error(reason)
-        %{}
-    end
+        {:error, %{reason: reason}} ->
+          Logger.error(reason)
+          %{}
+      end
 
     Ecto.Changeset.change(flight, params)
   end
