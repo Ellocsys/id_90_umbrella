@@ -19,15 +19,16 @@ defmodule Id90Web.FlightController do
 
     flights
     |> Enum.map(fn event ->
-      from_event(event)
+      IO.inspect(event)
+      |> from_event()
       |> Enum.map(fn attr ->
         Data.create_flight(attr)
       end)
     end)
 
     conn
-    |> put_flash(:info, "Flight successfully updated.")
-    |> redirect(to: Routes.user_flight_path(conn, :index, user: user))
+    |> put_flash(:info, "Данные о полетах обновленны.")
+    |> redirect(to: Routes.user_flight_path(conn, :index, user))
   end
 
   # def create(conn, %{"flight" => flight_params, "user_id" => user_id}) do
@@ -44,9 +45,10 @@ defmodule Id90Web.FlightController do
   #   end
   # end
 
-  def show(conn, %{"id" => id}) do
+  def show(conn, %{"user_id" => user_id, "id" => id}) do
+    user = Data.get_user!(user_id)
     flight = Data.get_flight!(id)
-    render(conn, "show.html", flight: flight)
+    render(conn, "show.html", flight: flight, user: user)
   end
 
   # def edit(conn, %{"id" => id}) do
@@ -72,7 +74,7 @@ defmodule Id90Web.FlightController do
   defp from_event(%ExIcal.Event{
          uid: raw_uid,
          start: departure,
-         end: arrival,
+         end: arrive,
          description: description
        }) do
     [_date | uids] = String.split(raw_uid, "-")
@@ -81,18 +83,20 @@ defmodule Id90Web.FlightController do
         do: %{
           uid: uid,
           departure: departure,
-          arrival: arrival,
+          arrive: arrive,
           description: description,
           name: raw_uid
         }
   end
 
-  # def delete(conn, %{"id" => id}) do
-  #   flight = Data.get_flight!(id)
-  #   {:ok, _flight} = Data.delete_flight(flight)
+  def delete(conn, %{"user_id" => user_id, "id" => id}) do
+    flight = Data.get_flight!(id)
+    user = Data.get_user!(user_id)
 
-  #   conn
-  #   |> put_flash(:info, "Flight deleted successfully.")
-  #   |> redirect(to: Routes.flight_path(conn, :index))
-  # end
+    {:ok, _flight} = Data.delete_flight(flight)
+
+    conn
+    |> put_flash(:info, "Полет удален.")
+    |> redirect(to: Routes.user_flight_path(conn, :index, user))
+  end
 end

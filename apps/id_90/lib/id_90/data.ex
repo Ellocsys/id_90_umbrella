@@ -133,6 +133,19 @@ defmodule Id90.Data do
   """
   def get_flight!(id), do: Repo.get!(Flight, id)
 
+  def maybe_update_current_flight(%{uid: uid, departure: departure}) do
+    case get_flight_by([uid: uid, departure: departure]) do
+      nil ->
+        %Flight{}
+      result ->
+        result
+    end
+  end
+
+  def maybe_update_current_flight(%{}), do: %Flight{}
+
+  def get_flight_by(params), do: Repo.get_by(Flight, params)
+
   @doc """
   Creates a flight.
 
@@ -146,8 +159,9 @@ defmodule Id90.Data do
 
   """
   def create_flight(attrs \\ %{}) do
-    %Flight{}
-    |> Flight.changeset(attrs)
+    attrs
+    |> maybe_update_current_flight()
+    |> Flight.create_changeset(attrs)
     |> Repo.insert_or_update!()
   end
 
@@ -165,7 +179,7 @@ defmodule Id90.Data do
   """
   def update_flight(%Flight{} = flight, attrs) do
     flight
-    |> Flight.changeset(attrs)
+    |> Flight.update_changeset(attrs)
     |> Repo.update()
   end
 
@@ -194,9 +208,32 @@ defmodule Id90.Data do
       %Ecto.Changeset{source: %Flight{}}
 
   """
-  def change_flight(%Flight{} = flight) do
-    Flight.changeset(flight, %{})
-  end
+  # def change_flight(%Flight{} = flight) do
+  #   Flight.changeset(flight, %{})
+  # end
+
+  # public function setBoardData(): self
+  # {
+  #     $now = new \DateTime();
+  #     $format = 'Y-m-d\TH:i:s';
+  #     $date = $this->getBeginDatetime();
+  #     if ($date->diff($now)->days < 6)
+  #     {
+  #         $ch = curl_init("http://onlineboard.aeroflot.ru/api/1/json/site/ru/flights/0/" . $date->format('Y.m.d') . "/18/22/" . $this->getUid());
+  #         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  #         $result = json_decode(curl_exec($ch), true);
+  #         curl_close($ch);
+  #         $begin = \DateTime::createFromFormat($format, $result[0]['departureTimeUtc']);
+  #         $end = \DateTime::createFromFormat($format, $result[0]['arrivalTimeUtc']);
+  #         $duration = $end->getTimestamp() - $begin->getTimestamp();
+
+  #         $this
+  #             ->setBeginDatetime($begin)
+  #             ->setEndDatetime($end)
+  #             ->setDuration($duration);
+  #     }
+  #     return $this;
+  # }
 
   @spec get_user_calendar(Id90.Data.User.t()) :: [ExIcal.Event.t()]
   def get_user_calendar(%User{remote_login: remote_login, remote_pass: remote_pass, id90: id90}) do

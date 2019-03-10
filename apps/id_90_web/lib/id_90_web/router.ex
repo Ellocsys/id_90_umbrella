@@ -16,8 +16,6 @@ defmodule Id90Web.Router do
   scope "/", Id90Web do
     pipe_through :browser
 
-    # get "/", PageController, :index
-
     resources "/", UserController do
       resources "/flights", FlightController
     end

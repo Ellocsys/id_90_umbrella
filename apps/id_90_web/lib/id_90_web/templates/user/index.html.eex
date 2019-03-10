@@ -1,11 +1,11 @@
-<h1>Listing Users</h1>
+<h1>Список пользователей</h1>
 
 <table>
   <thead>
     <tr>
       <th>Id90</th>
-      <th>Remote login</th>
-      <th>Remote pass</th>
+      <th>Login</th>
+      <th>Password</th>
 
       <th></th>
     </tr>
@@ -18,13 +18,14 @@
       <td><%= user.remote_pass %></td>
 
       <td>
-        <%= link "Show", to: Routes.user_path(@conn, :show, user) %>
-        <%= link "Edit", to: Routes.user_path(@conn, :edit, user) %>
-        <%= link "Delete", to: Routes.user_path(@conn, :delete, user), method: :delete, data: [confirm: "Are you sure?"] %>
+        <%= link "Список полетов", to: Routes.user_flight_path(@conn, :index, user) %>
+        <%= link "Подробнее", to: Routes.user_path(@conn, :show, user) %>
+        <%= link "Редактировать", to: Routes.user_path(@conn, :edit, user) %>
+        <%= link "Удалить", to: Routes.user_path(@conn, :delete, user), method: :delete, data: [confirm: "Уверен?"] %>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<span><%= link "New User", to: Routes.user_path(@conn, :new) %></span>
+<span><%= link "Новый пользователь", to: Routes.user_path(@conn, :new) %></span>

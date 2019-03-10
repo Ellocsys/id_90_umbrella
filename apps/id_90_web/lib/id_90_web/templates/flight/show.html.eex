@@ -1,4 +1,4 @@
-<h1>Show Flight</h1>
+<h1>Полет <%= @flight.name %></h1>
 
 <ul>
 
@@ -39,7 +39,7 @@
 
   <li>
     <strong>Duration:</strong>
-    <%= @flight.duration %>
+    <%= Time.add(~T[00:00:00], @flight.duration) %>
   </li>
 
   <li>
@@ -49,5 +49,4 @@
 
 </ul>
 
-<span><%= link "Edit", to: Routes.flight_path(@conn, :edit, @flight) %></span>
-<span><%= link "Back", to: Routes.flight_path(@conn, :index) %></span>
+<span><%= link "Назад", to: Routes.user_flight_path(@conn, :index, @user) %></span>

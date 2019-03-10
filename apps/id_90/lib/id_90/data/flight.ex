@@ -19,26 +19,26 @@ defmodule Id90.Data.Flight do
   end
 
   @doc false
-  def create_changeset(flight, _attrs) do
+  def create_changeset(flight, attrs) do
     flight
-    # |> cast(attrs, [:name, :description, :uid, :departure, :arrive])
+    |> cast(attrs, [:name, :description, :uid, :departure, :arrive])
     |> validate_required([:name, :description, :uid, :departure, :arrive])
-    |> put_duration({:departure, :arrival, :duration})
+    |> put_duration({:departure, :arrive, :duration})
   end
 
   def update_changeset(flight, attrs) do
     flight
     |> cast(attrs, [:real_departure, :real_arrive])
     |> validate_required([:real_departure, :real_arrive])
-    |> put_duration({:real_departure, :real_arrival, :real_duration})
+    |> put_duration({:real_departure, :real_arrive, :real_duration})
   end
 
-  def put_duration(%Changeset{} = changeset, {departure_field, arrival_field, duration_field}) do
+  def put_duration(%Changeset{} = changeset, {departure_field, arrive_field, duration_field}) do
     changeset
     |> put_change(
       duration_field,
       NaiveDateTime.diff(
-        get_field(changeset, arrival_field),
+        get_field(changeset, arrive_field),
         get_field(changeset, departure_field)
       )
     )

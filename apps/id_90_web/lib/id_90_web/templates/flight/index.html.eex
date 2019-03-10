@@ -1,17 +1,17 @@
-<h1>Listing Flights</h1>
+<h1>Список полетов</h1>
 
 <table>
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Description</th>
+      <th>Название</th>
+      <th>Описание</th>
       <th>Uid</th>
-      <th>Departure</th>
-      <th>Arrive</th>
-      <th>Real departure</th>
-      <th>Real arrive</th>
-      <th>Duration</th>
-      <th>Real duration</th>
+      <th>Начало</th>
+      <th>Конец</th>
+      <th>Начало полета</th>
+      <th>Конец полета</th>
+      <th>Длительность</th>
+      <th>Длительность полета</th>
 
       <th></th>
     </tr>
@@ -26,17 +26,16 @@
       <td><%= flight.arrive %></td>
       <td><%= flight.real_departure %></td>
       <td><%= flight.real_arrive %></td>
-      <td><%= flight.duration %></td>
+      <td><%= Time.add(~T[00:00:00], flight.duration) %></td>
       <td><%= flight.real_duration %></td>
 
       <td>
-        <%= link "Show", to: Routes.user_flight_path(@conn, :show, @user, flight) %>
-        <%= link "Edit", to: Routes.user_flight_path(@conn, :edit, @user, flight) %>
-        <%= link "Delete", to: Routes.user_flight_path(@conn, :delete, @user, flight), method: :delete, data: [confirm: "Are you sure?"] %>
+        <%= link "Подробнее", to: Routes.user_flight_path(@conn, :show, @user, flight) %>
+        <%= link "Удалить", to: Routes.user_flight_path(@conn, :delete, @user, flight), method: :delete, data: [confirm: "Уверен?"] %>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<span><%= link "New Flight", to: Routes.user_flight_path(@conn, :new, @user) %></span>
+<span><%= link "Обновить данные", to: Routes.user_flight_path(@conn, :new, @user) %></span>
