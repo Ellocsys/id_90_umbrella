@@ -7,11 +7,11 @@ defmodule Id90.Data.Flight do
     field :arrive, :naive_datetime
     field :departure, :naive_datetime
     field :description, :string
-    field :duration, :integer
+    field :duration, :integer, default: 0
     field :name, :string
     field :real_arrive, :naive_datetime
     field :real_departure, :naive_datetime
-    field :real_duration, :integer
+    field :real_duration, :integer, default: 0
     field :uid, :string
     field :user_id, :id
 

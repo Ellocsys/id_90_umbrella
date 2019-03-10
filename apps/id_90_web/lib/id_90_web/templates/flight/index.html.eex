@@ -3,7 +3,6 @@
 <table>
   <thead>
     <tr>
-      <th>Название</th>
       <th>Описание</th>
       <th>Uid</th>
       <th>Начало</th>
@@ -19,7 +18,6 @@
   <tbody>
 <%= for flight <- @flights do %>
     <tr>
-      <td><%= flight.name %></td>
       <td><%= flight.description %></td>
       <td><%= flight.uid %></td>
       <td><%= flight.departure %></td>
@@ -27,7 +25,7 @@
       <td><%= flight.real_departure %></td>
       <td><%= flight.real_arrive %></td>
       <td><%= Time.add(~T[00:00:00], flight.duration) %></td>
-      <td><%= flight.real_duration %></td>
+      <td><%= Time.add(~T[00:00:00], flight.real_duration) %></td>
 
       <td>
         <%= link "Подробнее", to: Routes.user_flight_path(@conn, :show, @user, flight) %>

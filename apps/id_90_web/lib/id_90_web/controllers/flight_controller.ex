@@ -19,10 +19,11 @@ defmodule Id90Web.FlightController do
 
     flights
     |> Enum.map(fn event ->
-      IO.inspect(event)
-      |> from_event()
+      Data.from_event(event)
       |> Enum.map(fn attr ->
-        Data.create_flight(attr)
+        flight = Data.create_flight(attr)
+        flight_data = Data.get_board_data(flight)
+        Data.update_flight(flight, flight_data)
       end)
     end)
 
@@ -57,37 +58,19 @@ defmodule Id90Web.FlightController do
   #   render(conn, "edit.html", flight: flight, changeset: changeset)
   # end
 
-  def update(conn, %{"id" => id, "flight" => flight_params}) do
-    flight = Data.get_flight!(id)
+  # def update(conn, %{"id" => id, "flight" => flight_params}) do
+  #   flight = Data.get_flight!(id)
 
-    case Data.update_flight(flight, flight_params) do
-      {:ok, flight} ->
-        conn
-        |> put_flash(:info, "Flight updated successfully.")
-        |> redirect(to: Routes.flight_path(conn, :show, flight))
+  #   case Data.update_flight(flight, flight_params) do
+  #     {:ok, flight} ->
+  #       conn
+  #       |> put_flash(:info, "Flight updated successfully.")
+  #       |> redirect(to: Routes.flight_path(conn, :show, flight))
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", flight: flight, changeset: changeset)
-    end
-  end
-
-  defp from_event(%ExIcal.Event{
-         uid: raw_uid,
-         start: departure,
-         end: arrive,
-         description: description
-       }) do
-    [_date | uids] = String.split(raw_uid, "-")
-
-    for uid <- uids,
-        do: %{
-          uid: uid,
-          departure: departure,
-          arrive: arrive,
-          description: description,
-          name: raw_uid
-        }
-  end
+  #     {:error, %Ecto.Changeset{} = changeset} ->
+  #       render(conn, "edit.html", flight: flight, changeset: changeset)
+  #   end
+  # end
 
   def delete(conn, %{"user_id" => user_id, "id" => id}) do
     flight = Data.get_flight!(id)

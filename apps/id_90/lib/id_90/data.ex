@@ -6,6 +6,8 @@ defmodule Id90.Data do
   import Ecto.Query, warn: false
   alias Id90.Repo
 
+  require Logger
+
   alias Id90.Data.User
 
   @doc """
@@ -114,7 +116,8 @@ defmodule Id90.Data do
 
   """
   def list_flights do
-    Repo.all(Flight)
+    from(f in Flight, order_by: [desc: f.departure])
+    |> Repo.all()
   end
 
   @doc """
@@ -177,12 +180,15 @@ defmodule Id90.Data do
       {:error, %Ecto.Changeset{}}
 
   """
+ 
+  def update_flight(%Flight{} = flight, %{}) do
+    flight
+  end
   def update_flight(%Flight{} = flight, attrs) do
     flight
     |> Flight.update_changeset(attrs)
     |> Repo.update()
   end
-
   @doc """
   Deletes a Flight.
 
@@ -212,28 +218,31 @@ defmodule Id90.Data do
   #   Flight.changeset(flight, %{})
   # end
 
-  # public function setBoardData(): self
-  # {
-  #     $now = new \DateTime();
-  #     $format = 'Y-m-d\TH:i:s';
-  #     $date = $this->getBeginDatetime();
-  #     if ($date->diff($now)->days < 6)
-  #     {
-  #         $ch = curl_init("http://onlineboard.aeroflot.ru/api/1/json/site/ru/flights/0/" . $date->format('Y.m.d') . "/18/22/" . $this->getUid());
-  #         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  #         $result = json_decode(curl_exec($ch), true);
-  #         curl_close($ch);
-  #         $begin = \DateTime::createFromFormat($format, $result[0]['departureTimeUtc']);
-  #         $end = \DateTime::createFromFormat($format, $result[0]['arrivalTimeUtc']);
-  #         $duration = $end->getTimestamp() - $begin->getTimestamp();
+  def get_board_data(%Flight{arrive: arrive} = flight) do
+    diff = NaiveDateTime.diff(NaiveDateTime.utc_now(), arrive)
+    case diff > 0 and diff < 60 * 60 * 24 * 3 do
+      true ->
+        get_board_data_from_api(flight)
+      false -> 
+        %{}
+    end
+  end
 
-  #         $this
-  #             ->setBeginDatetime($begin)
-  #             ->setEndDatetime($end)
-  #             ->setDuration($duration);
-  #     }
-  #     return $this;
-  # }
+  def get_board_data_from_api(%Flight{departure: departure, uid: uid}) do
+  
+    url = "http://onlineboard.aeroflot.ru/api/1/json/site/ru/flights/0/#{departure.year}.#{departure.mounth}.#{departure.day}/18/22/#{uid}"
+
+    case HTTPoison.get(url) do
+      {:ok, %{status_code: 200, body: body}} ->
+        [%{"departureTimeUtc" => departureTime, "arrivalTimeUtc" => arrivalTime}] = Jason.decode!(body)
+
+        %{real_departure: departureTime, real_arrive: arrivalTime}
+      {:error, %{reason: reason}} ->
+        Logger.error(reason)
+        %{}
+    end
+
+  end
 
   @spec get_user_calendar(Id90.Data.User.t()) :: [ExIcal.Event.t()]
   def get_user_calendar(%User{remote_login: remote_login, remote_pass: remote_pass, id90: id90}) do
@@ -248,7 +257,25 @@ defmodule Id90.Data do
         ExIcal.parse(body)
 
       {:error, %{reason: reason}} ->
-        IO.inspect(reason)
+        Logger.error(reason)
     end
   end
+
+  def from_event(%ExIcal.Event{
+    uid: raw_uid,
+    start: departure,
+    end: arrive,
+    description: description
+  }) do
+[_date | uids] = String.split(raw_uid, "-")
+
+for uid <- uids,
+   do: %{
+     uid: uid,
+     departure: departure,
+     arrive: arrive,
+     description: description,
+     name: raw_uid
+   }
+end
 end

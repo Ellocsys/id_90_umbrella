@@ -44,7 +44,7 @@
 
   <li>
     <strong>Real duration:</strong>
-    <%= @flight.real_duration %>
+    <%= Time.add(~T[00:00:00], @flight.real_duration) %>
   </li>
 
 </ul>
