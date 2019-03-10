@@ -5,7 +5,7 @@ defmodule Id90Web.FlightController do
   alias Id90.Data.Flight
 
   def index(conn, %{"user_id" => user_id}) do
-    flights = Data.list_flights()
+    flights = Data.list_flights(user_id)
     user = Data.get_user!(user_id)
     render(conn, "index.html", flights: flights, user: user)
   end
@@ -21,9 +21,8 @@ defmodule Id90Web.FlightController do
     |> Enum.map(fn event ->
       Data.from_event(event)
       |> Enum.map(fn attr ->
-        flight = Data.create_flight(attr)
-        flight_data = Data.get_board_data(flight)
-        Data.update_flight(flight, flight_data)
+        Data.create_flight(attr)
+        |> Data.update_flight()
       end)
     end)
 

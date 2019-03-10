@@ -2,6 +2,7 @@ defmodule Id90.Data.Flight do
   use Ecto.Schema
   import Ecto.Changeset
   alias Ecto.Changeset
+  alias Id90.Data
 
   schema "flights" do
     field :arrive, :naive_datetime
@@ -26,10 +27,10 @@ defmodule Id90.Data.Flight do
     |> put_duration({:departure, :arrive, :duration})
   end
 
-  def update_changeset(flight, attrs) do
+  def update_changeset(flight) do
     flight
-    |> cast(attrs, [:real_departure, :real_arrive])
-    |> validate_required([:real_departure, :real_arrive])
+    |> Data.add_board_data()
+    # |> validate_required([:real_departure, :real_arrive])
     |> put_duration({:real_departure, :real_arrive, :real_duration})
   end
 

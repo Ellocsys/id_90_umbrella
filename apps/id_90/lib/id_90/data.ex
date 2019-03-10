@@ -115,8 +115,12 @@ defmodule Id90.Data do
       [%Flight{}, ...]
 
   """
-  def list_flights do
+  def list_flights() do
     from(f in Flight, order_by: [desc: f.departure])
+    |> Repo.all()
+  end
+  def list_flights(user_id) do
+    from(f in Flight, where: [user_id: ^user_id], order_by: [desc: f.departure])
     |> Repo.all()
   end
 
@@ -182,14 +186,19 @@ defmodule Id90.Data do
 
   """
 
-  def update_flight(%Flight{} = flight, %{}) do
-    flight
-  end
+  def update_flight(%Flight{arrive: arrive} = flight) do
+    diff = NaiveDateTime.diff(NaiveDateTime.utc_now(), arrive)
 
-  def update_flight(%Flight{} = flight, attrs) do
-    flight
-    |> Flight.update_changeset(attrs)
-    |> Repo.update()
+    case diff > 0 and diff < 60 * 60 * 24 * 3 do
+      true ->
+        flight
+        |> Flight.update_changeset()
+        |> Repo.update()
+
+      false ->
+        flight
+    end
+   
   end
 
   @doc """
@@ -221,25 +230,13 @@ defmodule Id90.Data do
   #   Flight.changeset(flight, %{})
   # end
 
-  def get_board_data(%Flight{arrive: arrive} = flight) do
-    diff = NaiveDateTime.diff(NaiveDateTime.utc_now(), arrive)
-
-    case diff > 0 and diff < 60 * 60 * 24 * 3 do
-      true ->
-        get_board_data_from_api(flight)
-
-      false ->
-        %{}
-    end
-  end
-
-  def get_board_data_from_api(%Flight{departure: departure, uid: uid}) do
+  def add_board_data(%Flight{departure: departure, uid: uid} = flight) do
     url =
       "http://onlineboard.aeroflot.ru/api/1/json/site/ru/flights/0/#{departure.year}.#{
         departure.mounth
       }.#{departure.day}/18/22/#{uid}"
 
-    case HTTPoison.get(url) do
+    params = case HTTPoison.get(url) do
       {:ok, %{status_code: 200, body: body}} ->
         [%{"departureTimeUtc" => departureTime, "arrivalTimeUtc" => arrivalTime}] =
           Jason.decode!(body)
@@ -250,6 +247,8 @@ defmodule Id90.Data do
         Logger.error(reason)
         %{}
     end
+
+    Ecto.Changeset.change(flight, params)
   end
 
   @spec get_user_calendar(Id90.Data.User.t()) :: [ExIcal.Event.t()]

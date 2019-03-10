@@ -7,7 +7,8 @@ defmodule Id90.Application do
 
   def start(_type, _args) do
     children = [
-      Id90.Repo
+      Id90.Repo,
+      {Id90.Updater, [60]}
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Id90.Supervisor)
