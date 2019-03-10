@@ -237,7 +237,7 @@ defmodule Id90.Data do
       }.#{departure.day}/18/22/#{uid}"
 
     params =
-      case HTTPoison.get(url) do
+      case HTTPoison.get(url, [], [timeout: 10_000, recv_timeout: 10_000]) do
         {:ok, %{status_code: 200, body: body}} ->
           [%{"departureTimeUtc" => departureTime, "arrivalTimeUtc" => arrivalTime}] =
             Jason.decode!(body)
