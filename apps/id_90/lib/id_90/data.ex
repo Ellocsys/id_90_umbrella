@@ -137,9 +137,10 @@ defmodule Id90.Data do
   def get_flight!(id), do: Repo.get!(Flight, id)
 
   def maybe_update_current_flight(%{uid: uid, departure: departure}) do
-    case get_flight_by([uid: uid, departure: departure]) do
+    case get_flight_by(uid: uid, departure: departure) do
       nil ->
         %Flight{}
+
       result ->
         result
     end
@@ -180,15 +181,17 @@ defmodule Id90.Data do
       {:error, %Ecto.Changeset{}}
 
   """
- 
+
   def update_flight(%Flight{} = flight, %{}) do
     flight
   end
+
   def update_flight(%Flight{} = flight, attrs) do
     flight
     |> Flight.update_changeset(attrs)
     |> Repo.update()
   end
+
   @doc """
   Deletes a Flight.
 
@@ -220,28 +223,33 @@ defmodule Id90.Data do
 
   def get_board_data(%Flight{arrive: arrive} = flight) do
     diff = NaiveDateTime.diff(NaiveDateTime.utc_now(), arrive)
+
     case diff > 0 and diff < 60 * 60 * 24 * 3 do
       true ->
         get_board_data_from_api(flight)
-      false -> 
+
+      false ->
         %{}
     end
   end
 
   def get_board_data_from_api(%Flight{departure: departure, uid: uid}) do
-  
-    url = "http://onlineboard.aeroflot.ru/api/1/json/site/ru/flights/0/#{departure.year}.#{departure.mounth}.#{departure.day}/18/22/#{uid}"
+    url =
+      "http://onlineboard.aeroflot.ru/api/1/json/site/ru/flights/0/#{departure.year}.#{
+        departure.mounth
+      }.#{departure.day}/18/22/#{uid}"
 
     case HTTPoison.get(url) do
       {:ok, %{status_code: 200, body: body}} ->
-        [%{"departureTimeUtc" => departureTime, "arrivalTimeUtc" => arrivalTime}] = Jason.decode!(body)
+        [%{"departureTimeUtc" => departureTime, "arrivalTimeUtc" => arrivalTime}] =
+          Jason.decode!(body)
 
         %{real_departure: departureTime, real_arrive: arrivalTime}
+
       {:error, %{reason: reason}} ->
         Logger.error(reason)
         %{}
     end
-
   end
 
   @spec get_user_calendar(Id90.Data.User.t()) :: [ExIcal.Event.t()]
@@ -262,20 +270,20 @@ defmodule Id90.Data do
   end
 
   def from_event(%ExIcal.Event{
-    uid: raw_uid,
-    start: departure,
-    end: arrive,
-    description: description
-  }) do
-[_date | uids] = String.split(raw_uid, "-")
+        uid: raw_uid,
+        start: departure,
+        end: arrive,
+        description: description
+      }) do
+    [_date | uids] = String.split(raw_uid, "-")
 
-for uid <- uids,
-   do: %{
-     uid: uid,
-     departure: departure,
-     arrive: arrive,
-     description: description,
-     name: raw_uid
-   }
-end
+    for uid <- uids,
+        do: %{
+          uid: uid,
+          departure: departure,
+          arrive: arrive,
+          description: description,
+          name: raw_uid
+        }
+  end
 end
