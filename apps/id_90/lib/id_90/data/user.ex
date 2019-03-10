@@ -16,7 +16,7 @@ defmodule Id90.Data.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:id90, :remote_login, :remote_pass, :login, :pass])
-    |> validate_required([:id90, :remote_login, :remote_pass, :login, :pass])
+    |> validate_required([:id90, :remote_login, :remote_pass])
     |> unique_constraint(:id90)
     |> unique_constraint(:remote_login)
     |> unique_constraint(:login)
