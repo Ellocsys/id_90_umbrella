@@ -20,6 +20,12 @@ config :id_90_web, Id90Web.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json",
   secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE")
 
+config :id_90_web, base_auth: [
+  username: System.get_env("USERNAME"),
+  password: System.get_env("PASSWORD"),
+  realm: "Admin Area"
+]
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

@@ -7,6 +7,7 @@ defmodule Id90Web.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug BasicAuth, use_config: {:id_90_web, :base_auth}
   end
 
   pipeline :api do
