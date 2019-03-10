@@ -16,6 +16,7 @@ defmodule Id90Web.FlightController do
     {_no_flights, flights} =
       Data.get_user_calendar(user)
       |> Enum.split_with(fn %ExIcal.Event{uid: uid} -> String.ends_with?(uid, "NO-FLIGHT") end)
+      |> IO.inspect()
 
     flights
     |> Enum.map(fn event ->
