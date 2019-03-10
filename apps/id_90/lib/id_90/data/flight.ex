@@ -22,8 +22,8 @@ defmodule Id90.Data.Flight do
   @doc false
   def create_changeset(flight, attrs) do
     flight
-    |> cast(attrs, [:name, :description, :uid, :departure, :arrive])
-    |> validate_required([:name, :description, :uid, :departure, :arrive])
+    |> cast(attrs, [:name, :description, :uid, :departure, :arrive, :user_id])
+    |> validate_required([:name, :description, :uid, :departure, :arrive, :user_id])
     |> put_duration({:departure, :arrive, :duration})
   end
 

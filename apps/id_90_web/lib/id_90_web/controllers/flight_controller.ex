@@ -16,13 +16,14 @@ defmodule Id90Web.FlightController do
     {_no_flights, flights} =
       Data.get_user_calendar(user)
       |> Enum.split_with(fn %ExIcal.Event{uid: uid} -> String.ends_with?(uid, "NO-FLIGHT") end)
-      |> IO.inspect()
 
     flights
     |> Enum.map(fn event ->
       Data.from_event(event)
       |> Enum.map(fn attr ->
-        Data.create_flight(attr)
+        attr
+        |> Map.put(:user_id, user_id)
+        |> Data.create_flight()
         |> Data.update_flight()
       end)
     end)

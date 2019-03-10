@@ -1,5 +1,6 @@
 <h1>Список полетов</h1>
-<div>Налет за этот месяц: </div>
+<% timestamp = @flights |> Enum.filter(fn %{departure: departure} -> departure.month == NaiveDateTime.utc_now().month end) |> Enum.reduce(0, fn %{duration: real_duration}, acc -> acc + real_duration end) %>
+<div>Налет за этот месяц: <%= div(timestamp, 60 * 60) %>:<%= Integer.mod(timestamp, 60) %> </div>
 
 <table>
   <thead>
