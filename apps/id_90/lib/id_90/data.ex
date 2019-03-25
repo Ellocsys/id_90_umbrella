@@ -233,7 +233,7 @@ defmodule Id90.Data do
   def add_board_data(%Flight{departure: departure, uid: uid} = flight) do
     url =
       "http://onlineboard.aeroflot.ru/api/1/json/site/ru/flights/0/#{departure.year}.#{
-        departure.mounth
+        departure.month
       }.#{departure.day}/18/22/#{uid}"
 
     params =
