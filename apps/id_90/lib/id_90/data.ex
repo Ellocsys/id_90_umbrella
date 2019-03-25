@@ -242,7 +242,7 @@ defmodule Id90.Data do
           [%{"departureTimeUtc" => departureTime, "arrivalTimeUtc" => arrivalTime}] =
             Jason.decode!(body)
 
-          %{real_departure: departureTime, real_arrive: arrivalTime}
+          %{real_departure: NaiveDateTime.from_iso8601!(departureTime), real_arrive: NaiveDateTime.from_iso8601!(arrivalTime)}
 
         {:error, %{reason: reason}} ->
           Logger.error(reason)
